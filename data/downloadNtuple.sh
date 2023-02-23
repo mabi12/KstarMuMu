@@ -1,0 +1,1 @@
+scp mbiros@lxplus.cern.ch:/eos/atlas/atlascerngroupdisk/phys-beauty/RKstarRun2/ntuples/muon_channel_v0.9/ntuples_updated/ntuple-300701_part_01.root .
