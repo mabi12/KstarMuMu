@@ -52,7 +52,7 @@ else:
 
 print("data loaded",f"{timer.time()} s")
 
-top = "HLT_j0_perf_L1RD0_FILLED"
+# top = "HLT_j0_perf_L1RD0_FILLED"
 trig_counter = {}
 
 timer.start()
@@ -62,13 +62,13 @@ for i, lt in enumerate(x):
         x[i][j]=str(t)
         
 for lt in x:
-    if top not in lt:
-        for t in lt:
-            print(type(t))
-            if t in trig_counter:
-                trig_counter[t] += 1
-            else:
-                trig_counter[t] = 1
+    # if top not in lt:
+    for t in lt:
+        print(type(t))
+        if t in trig_counter:
+            trig_counter[t] += 1
+        else:
+            trig_counter[t] = 1
 
 #data loaded 07/02/2023 - 20:32:07
 #data loaded 07/02/2023 - 20:35:29
