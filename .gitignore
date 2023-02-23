@@ -2,3 +2,4 @@ data/ntuple*
 data/data*
 mcStudies/*
 mcStudies/out/*
+*.pyc
