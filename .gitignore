@@ -1,5 +1,5 @@
 data/ntuple*
 data/data*
-mcStudies/*
 mcStudies/out/*
+triggerStudies/out/*
 *.pyc
