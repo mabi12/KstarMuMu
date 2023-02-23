@@ -3,7 +3,7 @@ from tqdm import tqdm
 import ROOT
 
 #hack to load from parent directory
-sys.path.append('/home/marek/Kstarmumu/') 
+sys.path.append('../') 
 os.chdir("mcStudies")
 
 from Naming.mcDict import mcDict
@@ -13,7 +13,7 @@ from Naming.cuts import cuts_run1, var
 ROOT.gROOT.SetBatch(True)
 
 path = "/eos/atlas/atlascerngroupdisk/phys-beauty/RKstarRun2/ntuples/muon_channel_v0.9/ntuples_updated/"
-path = "/home/marek/Kstarmumu/data/"
+path = "../data/"
 draw = True
 
 mc_dict = mcDict(debugPrint=False)
