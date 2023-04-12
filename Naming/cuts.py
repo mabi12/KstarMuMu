@@ -13,7 +13,7 @@ def cutsRun1():
     cuts["Kstar_pt"] = "BmumuKst_diMeson_pT>3000"
     cuts["Kstar_mass"] = "(BmumuKst_kaonPion_mass > 846 && BmumuKst_kaonPion_mass < 946" +" || "+"BmumuKst_pionKaon_mass > 846 && BmumuKst_pionKaon_mass < 946)" 
     cuts["q2"] = "BmumuKst_diMuon_mass*BmumuKst_diMuon_mass>1 && BmumuKst_diMuon_mass*BmumuKst_diMuon_mass<12000000" 
-    cuts["B_mass"] = "BmumuKst_B_mass>5150 && BmumuKst_B_mass<5700" 
+    cuts["B_mass"] = "(BmumuKst_B_mass>5150 && BmumuKst_B_mass<5700 || BmumuKst_Bbar_mass>5150 && BmumuKst_Bbar_mass<5700)"  #TODO
     cuts["B_tau"] = f"{var['tau']}/{var['tau']}_err>12.5" 
     cuts["diMu_chi"] = "BmumuKst_diMuon_chi2_over_nDoF<10"
     cuts["B_chi"] = "BmumuKst_chi2_over_nDoF<2" 
@@ -28,3 +28,10 @@ def cutsRun1():
     return cuts_run1
 
 cuts_run1 = cutsRun1()
+
+
+#TODO ranges
+
+
+#if __name__ == 
+print(cuts_run1)

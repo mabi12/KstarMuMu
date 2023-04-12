@@ -1,4 +1,9 @@
 def mcDict(debugPrint=False):
+    """
+    return dictMC where names are keys and codes are values, e. g.  
+    dictMC = mcDict() 
+    dictMC['Bd_Kstar_mumu'] returns 300700
+    """
     debug = debugPrint
         
     allMC = """mc16_13TeV.300584.Py8BEG_A14_CTEQ6L1_Bp_Kp_mu4mu4.deriv.DAOD_BPHY12.e7074_e5984_a875_r10724_r10726_p3956_tid19100591_00
