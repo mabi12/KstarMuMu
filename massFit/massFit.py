@@ -1,5 +1,6 @@
 import sys, os
 from ROOT import *
+import ROOT
 import numpy as np
 import uproot3 as uproot
 import uproot3_methods as um
@@ -21,6 +22,13 @@ from Fitting.mass.Kfunctions import *
 
 gROOT.SetBatch(True)
 
+# Load the header and implementation files
+gROOT.ProcessLine('.L ../fitCore/MyPlot.h')
+gROOT.ProcessLine('.L ../fitCore/MyPlot.cxx')
+
+# Declare the class in PyROOT
+gROOT.ProcessLine("class MyPlot;")
+
 mc_dict = mcDict(debugPrint=False)
 var_dict = varDict()
 
@@ -41,19 +49,15 @@ data = RooDataSet("data", "My RooDataSet", ch, RooArgSet(m_B,m_Kstar,m_B_err))
 prodPdf = RooProdPdf("prodPdf", "prodPdf", RooArgList(f, voigt))
 
 fit_result = prodPdf.fitTo(data, RooFit.Save())
-frame = m_B.frame()
-data.plotOn(frame)
-prodPdf.plotOn(frame)
-frame.Draw()
-c.SaveAs("./out/fit_Bd.pdf")
-
-frame = m_Kstar.frame()
-data.plotOn(frame)
-prodPdf.plotOn(frame)
-frame.Draw()
-c.SaveAs("./out/fit_Ks.pdf")
-
 fit_result.Print("v")
+
+
+BPlot = ROOT.MyPlot(m_B, 250, "./out/", "Internal")
+BPlot.plotVarAndPull(data, prodPdf, 7, "fit_B")
+
+KstarPlot = ROOT.MyPlot(m_Kstar, 250, "./out/", "Internal")
+KstarPlot.plotVarAndPull(data, prodPdf, 2,"fit_Ks")
+
 
 exit()
 
