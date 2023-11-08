@@ -57,20 +57,20 @@ public:
 
 
 
-void selectCand(double chi=5, int pT=5000, TString inputFileName="ntuple-300700_part_0*", TString outputFileName="ntuple-300700_part_combi12", int seed=42){ 
+void selectCand(TString inputFileName="ntuple-data18_13TeV_periodL_part_00*", TString outputFileName="dataL00", int seed=42){ //300700_part_0 
     const char * cuts = "BmumuKst_meson0_pT > 500 && BmumuKst_meson1_pT > 500"
                     "&& BmumuKst_meson0_eta < 2.5 && BmumuKst_meson1_eta < 2.5"
                     "&& BmumuKst_muon0_pT > 3500 && BmumuKst_muon1_pT > 3500"
                     "&& BmumuKst_muon0_eta < 2.5 && BmumuKst_muon1_eta < 2.5"
                     "&& BmumuKst_diMeson_pT>3000"
-                    "&& (BmumuKst_kaonPion_mass > 846 && BmumuKst_kaonPion_mass < 946)"
-                    "&& BmumuKst_diMuon_mass*BmumuKst_diMuon_mass>1000000 && BmumuKst_diMuon_mass*BmumuKst_diMuon_mass<6000000"
-                    "&& (BmumuKst_B_mass>5150 && BmumuKst_B_mass<5700)"
-                    "&& BmumuKst_B_tau_invM_PVMinA0/BmumuKst_B_tau_invM_PVMinA0_err>12.5"
+                    "&& ((BmumuKst_kaonPion_mass > 846 && BmumuKst_kaonPion_mass < 946) ||  (BmumuKst_pionKaon_mass > 846 && BmumuKst_pionKaon_mass < 946))"
+                    "&& BmumuKst_diMuon_mass*BmumuKst_diMuon_mass>40000 && BmumuKst_diMuon_mass*BmumuKst_diMuon_mass<6000000"
+                    "&& ((BmumuKst_B_mass>5150 && BmumuKst_B_mass<5700)||(BmumuKst_Bbar_mass>5150 && BmumuKst_Bbar_mass<5700))"
+                    "&& (BmumuKst_B_tau_invM_PVMinA0/BmumuKst_B_tau_invM_PVMinA0_err>12.5 || BmumuKst_Bbar_tau_invM_PVMinA0/BmumuKst_Bbar_tau_invM_PVMinA0_err>12.5)"
                     "&& BmumuKst_diMuon_chi2_over_nDoF<10"
                     "&& BmumuKst_chi2_over_nDoF<2";
-    //  || BmumuKst_pionKaon_mass > 846 && BmumuKst_pionKaon_mass < 946
-    //  || BmumuKst_Bbar_mass>5150 && BmumuKst_Bbar_mass<5700
+
+    const float pdgKst = 896;
     TString inputFile = "../data/" + inputFileName + ".root";
     TString outputFile = "../data/" + outputFileName + "_bestCand.root";
 
@@ -90,6 +90,7 @@ void selectCand(double chi=5, int pT=5000, TString inputFileName="ntuple-300700_
     cout<<cuts<<endl;
     cout<<"========================="<<endl;
     cout<<"number of events changed: "<<en_before<<" -> "<<en_after<<endl;
+    cout<<"========================="<<endl;
     
     
     allcandt_tree->SetBranchStatus("*", false);
@@ -104,6 +105,9 @@ void selectCand(double chi=5, int pT=5000, TString inputFileName="ntuple-300700_
     VectorToScalar<float> Bbar_mass_err("BmumuKst_Bbar_mass_err", allcandt_tree, tree);
     VectorToScalar<float> B_tau("BmumuKst_B_tau_invM_PVMinA0", allcandt_tree, tree);
     VectorToScalar<float> B_tau_err("BmumuKst_B_tau_invM_PVMinA0_err", allcandt_tree, tree);
+    VectorToScalar<float> Bbar_tau("BmumuKst_Bbar_tau_invM_PVMinA0", allcandt_tree, tree);
+    VectorToScalar<float> Bbar_tau_err("BmumuKst_Bbar_tau_invM_PVMinA0_err", allcandt_tree, tree);
+    // VectorToScalar<float> B_eta("BmumuKst_B_eta", allcandt_tree, tree);
 
     VectorToScalar<float> muon0_eta("BmumuKst_muon0_eta", allcandt_tree, tree);
     VectorToScalar<float> muon0_pT("BmumuKst_muon0_pT", allcandt_tree, tree);
@@ -122,9 +126,18 @@ void selectCand(double chi=5, int pT=5000, TString inputFileName="ntuple-300700_
 
     int nCandidates;
     int nCandidatesPassed;
+    int Bd; //bd = 1 or bdbar = 0
+    float selected_B_mass;
+    float selected_Kst_mass;
     tree->Branch("nCandidates", &nCandidates);
     tree->Branch("nCandidatesPassed", &nCandidatesPassed);
-            
+    tree->Branch("Bd", &Bd);
+    tree->Branch("B_mass", &selected_B_mass);
+    tree->Branch("B_mass", &selected_B_mass);
+    tree->Branch("B_tau", &selected_B_mass);
+    tree->Branch("Kst_mass", &selected_Kst_mass);
+
+    int eventsWithoutPass = 0;
 
     
     
@@ -162,7 +175,7 @@ void selectCand(double chi=5, int pT=5000, TString inputFileName="ntuple-300700_
     double chi2Min;
     int chi2MinIndex;
     for(Long64_t i = 0; i< en_after; i++){
-        // if(i%100==0)std::cout << i << "/" << en_after << std::endl;
+        if (i % 100000 == 0)    std::cout<<"\r      " <<i<<" / "<<en_after<< std::flush;
         allcandt_tree->GetEntry(i);
         // std::cout << i <<" ";
         chi2Min = 100;
@@ -176,18 +189,21 @@ void selectCand(double chi=5, int pT=5000, TString inputFileName="ntuple-300700_
         for(int j = 0; j<nCandidates;j++){
             // std::cout << j;
             if (B_chi2_ndof.at(j) >= 2) continue;
-            if (B_mass.at(j) <= 5150 || B_mass.at(j) >= 5700) continue;
-            if (Kpi_mass.at(j) <= 846 || Kpi_mass.at(j) >= 946) continue;
-            if (diMuon_mass.at(j)*diMuon_mass.at(j)<=1000000 || diMuon_mass.at(j)*diMuon_mass.at(j)>=6000000) continue;
-            if (B_tau.at(j)/B_tau_err.at(j) <= 12.5) continue;
+            if ((B_mass.at(j) <= 5150 || B_mass.at(j) >= 5700) && (Bbar_mass.at(j) <= 5150 || Bbar_mass.at(j) >= 5700)) continue;  //TODO teraz to je ze ak obe su mimo
+            if ((Kpi_mass.at(j) <= 846 || Kpi_mass.at(j) >= 946) && (piK_mass.at(j) <= 846 || piK_mass.at(j) >= 946)) continue;  //TODO teraz to je ze ak obe su mimo
+            if (diMuon_mass.at(j)*diMuon_mass.at(j)<=40000 || diMuon_mass.at(j)*diMuon_mass.at(j)>=6000000) continue;  //TODO phi veto
+            if (B_tau.at(j)/B_tau_err.at(j) <= 12.75) continue; //TODO 12.75?
             if (diMeson_pT.at(j) <= 3000) continue;
             if (muon0_pT.at(j) <= 3500 || muon1_pT.at(j) <= 3500) continue;
             if (muon0_eta.at(j) >= 2.5 || muon1_eta.at(j) >= 2.5) continue;
             if (meson0_eta.at(j) >= 2.5 || meson1_eta.at(j) >= 2.5) continue;
+            // if (B_eta.at(j) >= 2.5 ) continue; //TODO
+            //TODO Kpi_eta.at(j) >= 2.5  && piK_eta.at(j) >= 2.5
+            //TODO dimuon? .at(j) >= 2.5
             if (meson0_pT.at(j) <= 500 || meson1_pT.at(j) <=500) continue;
             if (diMuon_chi2_ndof.at(j) >= 10) continue;
-            
-                    
+            //TODO costheta <=0.999
+            // TODO radiative   (B_mass.at(j) - pdgB) - (diMuon_mass.at(j) - mcc / cc = Jpsi psi2s
             nCandidatesPassed++;
             if(chi2Min>B_chi2_ndof.at(j)){
                 chi2Min = B_chi2_ndof.at(j);
@@ -197,20 +213,29 @@ void selectCand(double chi=5, int pT=5000, TString inputFileName="ntuple-300700_
         if(chi2MinIndex>-1){
             // plot->Fill(B_mass.size());
             // plotch->Fill(chi2MinIndex);
+            //select B flavour from Kst hypothesis
+            if (abs(Kpi_mass.at(chi2MinIndex) - pdgKst)<= abs(piK_mass.at(chi2MinIndex) - pdgKst)){ //Bd -> Kst -> K+ pi-
+                Bd = 1;
+                selected_B_mass = B_mass.at(chi2MinIndex);
+                selected_Kst_mass = Kpi_mass.at(chi2MinIndex);
+            } else {//Bd_bar -> Kst_bar -> K- pi+
+                Bd = 0;
+                selected_B_mass = Bbar_mass.at(chi2MinIndex);
+                selected_Kst_mass = piK_mass.at(chi2MinIndex);
+            }
             IReader::ApplyAllSelect(chi2MinIndex);
             tree->Fill();
-        }
+        } else eventsWithoutPass++;
         // std::cout << std::endl;
         
     }
-
+//TODO clone trigtree
 //     truthtree->CloneTree(-1, "fast");
     auto en_new = tree->GetEntries();
-    cout<<"========================="<<endl;
-    cout<<"created tree with N events:"<<endl;
-    cout<<"========================="<<endl;
-    cout<<en_new<<endl;
-    
+    cout<<"============================"<<endl;
+    cout<<"created tree with "<< en_new <<" events"<<endl;
+    cout<<"events without passed candidate "<<eventsWithoutPass  <<endl;
+    cout<<"============================"<<endl;
     newfile->Write();
     newfile->Close();
     
