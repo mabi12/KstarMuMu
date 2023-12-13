@@ -1,0 +1,21 @@
+selfBg BmumuKst_isTrueNonresBd==0 
+events: 10909
+all: 116519, passed run1 cuts: 1162
+selected: 108470, passed run1 cuts: 30
+selected over events: 9.943166193051608, passed run1 cuts: 0.0027500229168576406
+
+plotted vars in range:
+BmumuKst_B_mass - BmumuKst_B_mass>5150 && BmumuKst_B_mass<5700 
+BmumuKst_Bbar_mass - BmumuKst_Bbar_mass>5150 && BmumuKst_Bbar_mass<5700 
+BmumuKst_kaonPion_mass - BmumuKst_kaonPion_mass > 846 && BmumuKst_kaonPion_mass < 946 
+BmumuKst_pionKaon_mass - BmumuKst_pionKaon_mass > 846 && BmumuKst_pionKaon_mass < 946 
+BmumuKst_diMuon_mass*BmumuKst_diMuon_mass - BmumuKst_diMuon_mass*BmumuKst_diMuon_mass>1000000 &&  BmumuKst_diMuon_mass*BmumuKst_diMuon_mass < 6000000 
+BmumuKst_B_tau_invM_PVMinA0/BmumuKst_B_tau_invM_PVMinA0_err - BmumuKst_B_tau_invM_PVMinA0/BmumuKst_B_tau_invM_PVMinA0_err>0 && BmumuKst_B_tau_invM_PVMinA0/BmumuKst_B_tau_invM_PVMinA0_err<30 
+BmumuKst_chi2_over_nDoF - BmumuKst_chi2_over_nDoF<3 
+BmumuKst_diMuon_chi2_over_nDoF - BmumuKst_diMuon_chi2_over_nDoF>0 
+BmumuKst_muon0_pT - BmumuKst_muon0_pT<20000 
+BmumuKst_muon1_pT - BmumuKst_muon1_pT<20000 
+BmumuKst_diMuon_pT - BmumuKst_diMuon_pT<50000 
+
+
+BmumuKst_meson0_pT > 500 && BmumuKst_meson1_pT > 500 && BmumuKst_muon0_pT > 3500 && BmumuKst_muon1_pT > 3500 && BmumuKst_muon0_eta < 2.5 && BmumuKst_muon1_eta < 2.5 && BmumuKst_meson0_eta < 2.5 && BmumuKst_meson1_eta < 2.5 && BmumuKst_diMeson_pT>3000 && (BmumuKst_kaonPion_mass > 846 && BmumuKst_kaonPion_mass < 946 || BmumuKst_pionKaon_mass > 846 && BmumuKst_pionKaon_mass < 946) && BmumuKst_diMuon_mass*BmumuKst_diMuon_mass>1 && BmumuKst_diMuon_mass*BmumuKst_diMuon_mass<12000000 && BmumuKst_B_mass>5150 && BmumuKst_B_mass<5700 && BmumuKst_B_tau_invM_PVMinA0/BmumuKst_B_tau_invM_PVMinA0_err>12.5 && BmumuKst_diMuon_chi2_over_nDoF<10 && BmumuKst_chi2_over_nDoF<2
