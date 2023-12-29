@@ -58,5 +58,6 @@ from Naming.cuts import cuts_run1
 from Helpers.timeMeasuring import timer
 timer.start()
 #time consuming operation
-print("looped over triggers",f"{timer.time()} s")
+timer.print("looped over triggers")
+#output: looped over triggers",f"{timer.time()} s
 ```
