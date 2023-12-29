@@ -60,7 +60,7 @@ pdg = 896
 # h_ksb.Draw("same")
 
 # c.cd(2)
-range = (-90, 90)
+range = (-55, 55)
 
 ks = var_dict["Kstar_mass"]
 ksb = var_dict["Kstarb_mass"]
