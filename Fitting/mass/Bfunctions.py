@@ -1,6 +1,6 @@
 import sys
 from ROOT import RooRealVar, RooArgList
-from ROOT import RooCBShape, RooGaussian, RooAddPdf
+from ROOT import RooCBShape, RooGaussian, RooAddPdf, RooPolynomial, RooExponential, RooJohnson
 
 sys.path.append('../../') 
 from Naming.varDict import varDict
