@@ -4,7 +4,7 @@ import ROOT
 
 #hack to load from parent directory
 sys.path.append('../') 
-os.chdir("mcStudies")
+# os.chdir("variablesStudies")
 
 from Naming.mcDict import mcDict
 from Naming.cuts import cuts_run1, var
@@ -75,11 +75,11 @@ for comb in combinations:
             rename_htemp(v.replace("BmumuKst_",""))
             
             c.cd(2+3*j)
-            t.Draw(v,cut+" && "+range_[v])
+            t.Draw(v,cut+" && "+range_[v],"")
             rename_htemp("zoom")
                 
             c.cd(3+3*j)
-            t.Draw(v,cut+" && "+range_[v]+" && "+cuts_run1)
+            t.Draw(v,cut+" && "+range_[v]+" && "+cuts_run1,"")
             rename_htemp("RUN 1 cuts")    
 
         c.Draw()
@@ -87,25 +87,25 @@ for comb in combinations:
         c.SaveAs(f"out/{decay}_{cutFlag}.pdf")
 
 
-    with open(f"out/{decay}_{cutFlag}.log", 'w') as f:
-        f.write(f"{cutFlag} {cut} \n")
-        f.write(f"events: {N_events}\n")
-        f.write(f"all: {N_all}, passed run1 cuts: {N_passed}\n")
-        f.write(f"selected: {N_cut}, passed run1 cuts: {N_cut_passed}\n")
-        f.write(f"selected over events: {N_cut/N_events}, passed run1 cuts: {N_cut_passed/N_events}\n")
-        f.write("\n")
-        f.write("plotted vars in range:\n")
-        for r in range_:
-            f.write(f"{r} - {range_[r]} \n")
-        f.write("\n")
-        f.write("\n")
-        f.write(f"{cuts_run1}\n")
+    # with open(f"out/{decay}_{cutFlag}.log", 'w') as f:
+    #     f.write(f"{cutFlag} {cut} \n")
+    #     f.write(f"events: {N_events}\n")
+    #     f.write(f"all: {N_all}, passed run1 cuts: {N_passed}\n")
+    #     f.write(f"selected: {N_cut}, passed run1 cuts: {N_cut_passed}\n")
+    #     f.write(f"selected over events: {N_cut/N_events}, passed run1 cuts: {N_cut_passed/N_events}\n")
+    #     f.write("\n")
+    #     f.write("plotted vars in range:\n")
+    #     for r in range_:
+    #         f.write(f"{r} - {range_[r]} \n")
+    #     f.write("\n")
+    #     f.write("\n")
+    #     f.write(f"{cuts_run1}\n")
 
-    with open(f"out/results.log", 'w') as f:
-        f.write(f"{cutFlag} {cut} \n")
-        f.write(f"events: {N_events}\n")
-        f.write(f"all: {N_all}, passed run1 cuts: {N_passed}\n")
-        f.write(f"selected: {N_cut}, passed run1 cuts: {N_cut_passed}\n")
-        f.write(f"selected over events: {N_cut/N_events}, passed run1 cuts: {N_cut_passed/N_events}\n")
-        f.write("\n")
+    # with open(f"out/results.log", 'w') as f:
+    #     f.write(f"{cutFlag} {cut} \n")
+    #     f.write(f"events: {N_events}\n")
+    #     f.write(f"all: {N_all}, passed run1 cuts: {N_passed}\n")
+    #     f.write(f"selected: {N_cut}, passed run1 cuts: {N_cut_passed}\n")
+    #     f.write(f"selected over events: {N_cut/N_events}, passed run1 cuts: {N_cut_passed/N_events}\n")
+    #     f.write("\n")
         

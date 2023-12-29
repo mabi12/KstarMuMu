@@ -1,0 +1,40 @@
+%%% Tento soubor obsahuje definice různých užitečných maker a prostředí %%%
+%%% Další makra připisujte sem, ať nepřekáží v ostatních souborech.     %%%
+
+%%% Drobné úpravy stylu
+
+% Tato makra přesvědčují mírně ošklivým trikem LaTeX, aby hlavičky kapitol
+% sázel příčetněji a nevynechával nad nimi spoustu místa. Směle ignorujte.
+\makeatletter
+\def\@makechapterhead#1{
+  {\parindent \z@ \raggedright \normalfont
+   \Huge\bfseries \thechapter. #1
+   \par\nobreak
+   \vskip 20\p@
+}}
+\def\@makeschapterhead#1{
+  {\parindent \z@ \raggedright \normalfont
+   \Huge\bfseries #1
+   \par\nobreak
+   \vskip 20\p@
+}}
+\makeatother
+
+% Toto makro definuje kapitolu, která není očíslovaná, ale je uvedena v obsahu.
+\def\sectiont#1{
+\section*{}
+\addcontentsline{toc}{section}{#1}
+}
+
+% Trochu volnější nastavení dělení slov, než je default.
+\lefthyphenmin=2
+\righthyphenmin=2
+
+% Zapne černé "slimáky" na koncích řádků, které přetekly, abychom si
+% jich lépe všimli.
+\overfullrule=1mm
+%%% Vychytávky pro tabulky
+\newcommand{\pulrad}[1]{\raisebox{1.5ex}[0pt]{#1}}
+\newcommand{\mc}[1]{\multicolumn{1}{c}{#1}}
+
+

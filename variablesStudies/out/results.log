@@ -1,0 +1,6 @@
+selfBgJpsi BmumuKst_isTrueResBd==0 
+events: 331526
+all: 3330713, passed run1 cuts: 65953
+selected: 3085260, passed run1 cuts: 2093
+selected over events: 9.306238424738934, passed run1 cuts: 0.006313230334875696
+

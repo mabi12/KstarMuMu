@@ -95,6 +95,20 @@ void selectCand(TString inputFileName="ntuple-300700_part_02", TString outputFil
     
     
     allcandt_tree->SetBranchStatus("*", false);
+    auto en_before = allcandt->GetEntries();
+
+    TTree * allcandt_tree = allcandt->CopyTree(cuts);
+    auto en_after = allcandt_tree->GetEntries();
+    cout<<"========================="<<endl;
+    cout<<"after application of cuts:"<<endl;
+    cout<<"========================="<<endl;
+    cout<<cuts<<endl;
+    cout<<"========================="<<endl;
+    cout<<"number of events changed: "<<en_before<<" -> "<<en_after<<endl;
+    cout<<"========================="<<endl;
+    
+    
+    allcandt_tree->SetBranchStatus("*", false);
     TFile *newfile = new TFile(outputFile, "RECREATE");
     TTree *tree    = new TTree("BdBestChi", "BdBestChi");
     VectorToScalar<float> B_chi2_ndof("BmumuKst_chi2_over_nDoF", allcandt_tree, tree);
@@ -173,11 +187,18 @@ void selectCand(TString inputFileName="ntuple-300700_part_02", TString outputFil
 // //     VectorToScalar<float> B_trk2_pT("B_trk2_pT", allcandt, tree);
 // //     VectorToScalar<float> Kpi_pT("Kpi_pT", allcandt, tree);
 //     VectorToScalar<float> Kpi_mass("Kpi_mass", allcandt, tree);
+// //     VectorToScalar<float> B_trk1_pT("B_trk1_pT", allcandt, tree);
+// //     VectorToScalar<float> B_trk2_pT("B_trk2_pT", allcandt, tree);
+// //     VectorToScalar<float> Kpi_pT("Kpi_pT", allcandt, tree);
+//     VectorToScalar<float> Kpi_mass("Kpi_mass", allcandt, tree);
     
 
     // TH1* plot = new TH1I("candN", "candN", 15, 0, 15); 
     // TH1* plotch = new TH1I("candNch", "candNch", 15, 0, 15);
+    // TH1* plot = new TH1I("candN", "candN", 15, 0, 15); 
+    // TH1* plotch = new TH1I("candNch", "candNch", 15, 0, 15);
 
+    // TRandom3 *rand = new TRandom3(seed); 
     // TRandom3 *rand = new TRandom3(seed); 
     double chi2Min;
     int chi2MinIndex;
@@ -185,8 +206,15 @@ void selectCand(TString inputFileName="ntuple-300700_part_02", TString outputFil
         if (i % 100000 == 0)    std::cout<<"\r      " <<i<<" / "<<en_after<< std::flush;
         allcandt_tree->GetEntry(i);
         // std::cout << i <<" ";
+    for(Long64_t i = 0; i< en_after; i++){
+        if (i % 100000 == 0)    std::cout<<"\r      " <<i<<" / "<<en_after<< std::flush;
+        allcandt_tree->GetEntry(i);
+        // std::cout << i <<" ";
         chi2Min = 100;
         chi2MinIndex = -10;
+        nCandidates = B_mass.size();
+        nCandidatesPassed = 0;
+        if(nCandidates==0){
         nCandidates = B_mass.size();
         nCandidatesPassed = 0;
         if(nCandidates==0){
@@ -230,14 +258,35 @@ void selectCand(TString inputFileName="ntuple-300700_part_02", TString outputFil
                 selected_B_mass = Bbar_mass.at(chi2MinIndex);
                 selected_Kst_mass = piK_mass.at(chi2MinIndex);
             }
+            // plot->Fill(B_mass.size());
+            // plotch->Fill(chi2MinIndex);
+            //select B flavour from Kst hypothesis
+            if (abs(Kpi_mass.at(chi2MinIndex) - pdgKst)<= abs(piK_mass.at(chi2MinIndex) - pdgKst)){ //Bd -> Kst -> K+ pi-
+                Bd = 1;
+                selected_B_mass = B_mass.at(chi2MinIndex);
+                selected_Kst_mass = Kpi_mass.at(chi2MinIndex);
+            } else {//Bd_bar -> Kst_bar -> K- pi+
+                Bd = 0;
+                selected_B_mass = Bbar_mass.at(chi2MinIndex);
+                selected_Kst_mass = piK_mass.at(chi2MinIndex);
+            }
             IReader::ApplyAllSelect(chi2MinIndex);
             tree->Fill();
         } else eventsWithoutPass++;
         // std::cout << std::endl;
         
+        } else eventsWithoutPass++;
+        // std::cout << std::endl;
+        
     }
 //TODO clone trigtree
+//TODO clone trigtree
 //     truthtree->CloneTree(-1, "fast");
+    auto en_new = tree->GetEntries();
+    cout<<"============================"<<endl;
+    cout<<"created tree with "<< en_new <<" events"<<endl;
+    cout<<"events without passed candidate "<<eventsWithoutPass  <<endl;
+    cout<<"============================"<<endl;
     auto en_new = tree->GetEntries();
     cout<<"============================"<<endl;
     cout<<"created tree with "<< en_new <<" events"<<endl;

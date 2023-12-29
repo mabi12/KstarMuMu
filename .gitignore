@@ -3,3 +3,6 @@ data/data*
 mcStudies/out/*
 triggerStudies/out/*
 *.pyc
+mcStudies/out/*
+massFit/out/*
+.key/my*
