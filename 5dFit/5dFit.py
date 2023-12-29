@@ -13,7 +13,7 @@ from tqdm import tqdm
 
 #hack to load from parent directory
 sys.path.append('../') 
-os.chdir("5dFit")
+# os.chdir("5dFit")
 from Naming.mcDict import mcDict
 from Naming.varDict import varDict
 from Naming.cuts import cuts_run1, var
@@ -38,20 +38,38 @@ c = TCanvas("c", "c", 512,512)
 
 chi2s = []
 param_values = []
+
 variable_names = ["B_cos_theta_K", "B_cos_theta_L", "B_phi", "m_B", "m_Kstar"]
+variables = RooArgSet(B_cos_theta_K, B_cos_theta_L, B_phi, m_B, m_Kstar)
+data = RooDataSet("data", "My RooDataSet", ch, variables)
 
-for variable, fit, number in zip([B_cos_theta_K, B_cos_theta_L, B_phi, m_B, m_Kstar], [poly_theta_K, poly_theta_L, poly_phi, johnson, voigt], [3,3,3,4,2]):
-    data = RooDataSet("data", "My RooDataSet", ch, RooArgSet(variable))
-    fit_result = fit.fitTo(data, RooFit.Save())
-    param_values.append(variable.getVal())
-    chi2s.append(fit_result.Chi2())
-    var_Plot =  ROOT.MyPlot(variable, 250, "./out/", "Internal")
-    var_Plot.plotVarAndPull(data, fit, number, f"{variable}")
+# class fitFunction():
+#     def __init__(self, function, params, n_params):
+#         self.f = function
+#         self.ps = params
+#         self.n_params = n_params
 
-with open(csv_file_path, "a") as csv_file:
-     writer = csv.writer(csv_file, delimiter=" ")
-     writer.writerow(["Variable", "Parameter Value", "Chi2"])
-     for variable, param_value, chi2 in zip(variable_names, param_values, chi2s):
-        writer.writerow([variable, param_value, chi2])
+#     def __mul__(self, other):
+#         pass
+#         # TODO Treturn fitFunction()
+
+angularPdf = RooProdPdf("angularPdf", "angularPdf", RooArgList(poly_theta_K, poly_theta_L, poly_phi ))
+prodPdf = RooProdPdf("prodPdf", "prodPdf", RooArgList(johnson, voigt, angularPdf))
+# [3,3,3,4,2]):
+
+fit_result = prodPdf.fitTo(data, RooFit.Save())
+fit_result.Print("v")
+# param_values.append(variable.getVal())
+chi2s.append(fit_result.Chi2()/fit_result.NDF())
+var_Plot =  ROOT.MyPlot(variable, 250, "./out/", "Internal")
+var_Plot.plotVarAndPull(data, fit, number, f"{variable}")
+# chi2
+
+
+# with open(csv_file_path, "a") as csv_file:
+#      writer = csv.writer(csv_file, delimiter=" ")
+#      writer.writerow(["Variable", "Parameter Value", "Chi2"])
+#      for variable, param_value, chi2 in zip(variable_names, param_values, chi2s):
+#         writer.writerow([variable, param_value, chi2])
 
 
