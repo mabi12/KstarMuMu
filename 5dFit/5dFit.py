@@ -44,18 +44,10 @@ variable_names = ["B_cos_theta_K", "B_cos_theta_L", "B_phi", "m_B", "m_Kstar"]
 variables = RooArgSet(B_cos_theta_K, B_cos_theta_L, B_phi, m_B, m_Kstar)
 data = RooDataSet("data", "My RooDataSet", ch, variables)
 
-# class fitFunction():
-#     def __init__(self, function, params, n_params):
-#         self.f = function
-#         self.ps = params
-#         self.n_params = n_params
 
-#     def __mul__(self, other):
-#         pass
-#         # TODO Treturn fitFunction()
 
 angularPdf = RooProdPdf("angularPdf", "angularPdf", RooArgList(poly_theta_K, poly_theta_L, poly_phi ))
-prodPdf = RooProdPdf("prodPdf", "prodPdf", RooArgList(johnson, voigt, angularPdf))
+prodPdf = RooProdPdf("prodPdf", "prodPdf", RooArgList(johnson, K_mass_fit['vfix'], angularPdf))
 # [3,3,3,4,2]):
 
 fit_result = prodPdf.fitTo(data, RooFit.Save())

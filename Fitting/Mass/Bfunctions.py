@@ -4,39 +4,42 @@ from ROOT import RooCBShape, RooGaussian, RooAddPdf, RooPolynomial, RooExponenti
 
 sys.path.append('../../') 
 from Naming.varDict import varDict
+from Fitting import fitFunction
 
 var_dict = varDict()
 
 m_B = RooRealVar(var_dict["B_mass"],"m_{B} [MeV]",5150,5700)
 m_B_err = RooRealVar(var_dict["B_mass"]+"_err","#sigma_{mB}",0,50)
 
-# Define the Crystal Ball function
-mean = RooRealVar("mean", "Mean", 5300, 5250, 5350)
+B_mass_fit = {}
 
+# Define the Crystal Ball function
+cb_mean = RooRealVar("B_mass_cb_mean", "Mean", 5300, 5250, 5350)
 # scale_factor = RooRealVar("scale_factor", "per-event error scale factor", 2.5, 0.1, 10)
 # sigma = RooProduct("sigma","sigma", RooArgList(scale_factor, m_B_err))
-sigma = RooRealVar("sigma", "Sigma", 15, 10, 120)
-alpha = RooRealVar("alpha", "Alpha", 1, 0.1, 5)
-n = RooRealVar("n", "n", 1, 0.0001, 2)
-cb = RooCBShape("cb", "Crystal Ball", m_B, mean, sigma, alpha, n)
+cb_sigma = RooRealVar("B_mass_cb_sigma", "Sigma", 15, 10, 120)
+cb_alpha = RooRealVar("B_mass_cb_alpha", "Alpha", 1, 0.1, 5)
+cb_n = RooRealVar("B_mass_cb_n", "n", 1, 0.0001, 2)
+cb = RooCBShape("CrystalBall", "Crystal Ball", m_B, mean, sigma, alpha, n)
+B_mass_fit['cb'] = fitFunction(cb, RooArgList(cb_mean, cb_sigma, cb_alpha, cb_n))
 
+#Define Gaussian
 # g_scale_factor = RooRealVar("gauss_scale_factor", "per-event error scale factor", 2.5, 0.1, 10)
 # g_sigma = RooProduct("gauss_sigma","sigma", RooArgList(scale_factor, m_B_err))
-g_mean = RooRealVar("gauss_mean", "Mean", 5300, 5250, 5350)
-g_sigma = RooRealVar("gauss_sigma", "Sigma", 15, 10, 120)
-g = RooGaussian("g", "Gauss", m_B, g_mean, g_sigma)
+g1_mean = RooRealVar("B_mass_g1_mean", "Mean 1", 5300, 5250, 5350)
+g1_sigma = RooRealVar("B_mass_g1_sigma", "Sigma 1", 15, 10, 120)
+g1 = RooGaussian("Gaussian1", "Gauss1", m_B, g_mean, g_sigma)
+B_mass_fit['g'] = fitFunction(g1, RooArgList(g_mean, g_sigma))
 
-gg_mean = RooRealVar("ggauss_mean", "Mean", 5300, 5250, 5350)
-gg_sigma = RooRealVar("ggauss_sigma", "Sigma", 15, 5, 40)
-gg = RooGaussian("gG", "Gauss", m_B, g_mean, gg_sigma)
+#Define Double Gaussian
+g2_mean = RooRealVar("B_mass_g1_mean", "Mean 2", 5300, 5250, 5350)
+g2_sigma = RooRealVar("B_mass_g2_sigma", "Sigma 2", 15, 5, 40)
+g2 = RooGaussian("Gaussian2", "Gauss 2", m_B, gg_mean, gg_sigma)
+gg_frac = RooRealVar("frac", "frac", 0.5, 0.01, 1)
+dg = RooAddPdf("DoubleGaussian","Double Gaussian",RooArgList(g1,g2),RooArgList(frac),True)
+B_mass_fit['dg'] = fitFunction(dg, RooArgList(g1_mean, g1_sigma, g2_mean, g2_sigma, gg_frac))
 
-frac = RooRealVar("frac", "frac", 0.5, 0.01, 1)
-frac2 = RooRealVar("frac2", "frac", 0.1, 0.001, 0.3)
-f = RooAddPdf("cbg","cbg",RooArgList(cb,g),RooArgList(frac),True)
-# f = RooAddPdf("cbg","cbg",RooArgList(g,gg),RooArgList(frac),True)
-# f = g
-# f=cb
-
+#TODO nice naming
 #JOHNSON
 j_lambda = RooRealVar("lambda", "lambda",  3.0481e+01, 10, 100 )
 j_gamma = RooRealVar("gamma", "gamma", -3.1035e-01, -1.0,0.0)
@@ -44,15 +47,7 @@ j_delta = RooRealVar("delta", "delta", 1.3739e+00, 0.3, 10)
 j_mu = RooRealVar("mu", "mu", 5.2726e+03, 5250, 5350)
 johnson = RooJohnson("johnson_pdf", "Johnson PDF", m_B, j_mu, j_lambda, j_gamma, j_delta)
 
-#GAUSS + GAUSS
-g_mean_1 = RooRealVar("gauss_mean1", "Mean1", 5300, 5250, 5350)
-g_sigma_1 = RooRealVar("gauss_sigma1", "Sigma1", 15, 10, 120)
-g_1 = RooGaussian("g1", "Gauss1", m_B, g_mean_1, g_sigma_1)
-g_mean_2 = RooRealVar("gauss_mean2", "Mean2", 5300, 5250, 5350)
-g_sigma_2 = RooRealVar("gauss_sigma2", "Sigma2", 15, 10, 120)
-g_2 = RooGaussian("g2", "Gauss2", m_B, g_mean_2, g_sigma_2)
-superposed_gaussians = RooAddPdf("g1_g2","Superposition of Gaussians",RooArgList(g_1,g_2),RooArgList(frac),True)
-
+#TODO
 #GAUSS + EXP
 g_mean_3 = RooRealVar("gauss_mean2", "Mean2", 5300, 5150, 5350)
 g_sigma_3 = RooRealVar("gauss_sigma2", "Sigma2", 15, 10, 120)
