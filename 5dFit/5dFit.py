@@ -18,8 +18,9 @@ from Naming.mcDict import mcDict
 from Naming.varDict import varDict
 from Naming.cuts import cuts_run1, var
 from Helpers.timeMeasuring import timer
-from Fitting.mass.Bfunctions import *
-from Fitting.mass.Kfunctions import *
+from Fitting.Mass.Bfunctions import *
+from Fitting.Mass.Kfunctions import *
+from Fitting.Angles.Afunctions import *
 
 gROOT.SetBatch(True)
 
