@@ -7,6 +7,9 @@ def varDict(debugPrint=False):
     var_dict["Bb_mass"] = "BmumuKst_Bbar_mass"
     var_dict["Kstar_mass"] = "BmumuKst_kaonPion_mass"
     var_dict["Kstarb_mass"] = "BmumuKst_pionKaon_mass"
+    var_dict["ctk"] = "BmumuKst_" #TODO add names from ntuple
+    var_dict["ctl"] = "BmumuKst_"
+    var_dict["phi"] = "BmumuKst_"
     
     if debugPrint:
         print(5*"="+"varDict"+5*"=")
