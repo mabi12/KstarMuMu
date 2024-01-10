@@ -4,7 +4,7 @@ from ROOT import RooVoigtian
 
 sys.path.append('../../') 
 from Naming.varDict import varDict
-from Fitting import fitFunction
+from Fitting.fitFunction import fitFunction
 
 var_dict = varDict()
 
@@ -19,4 +19,4 @@ voigt = RooVoigtian("voigt", "voigt", m_Kstar, v_mean, v_width, v_sigma)
 
 v_width.setVal(50)
 v_width.setConstant(True)
-K_mass_fit['vfix'] = fitFunction(voigt, RooArgList(v_mean, v_width, v_sigma))
+K_mass_fit['voig'] = fitFunction(voigt, RooArgList(v_mean, v_width, v_sigma))

@@ -4,7 +4,7 @@ from ROOT import RooCBShape, RooGaussian, RooAddPdf, RooPolynomial, RooExponenti
 
 sys.path.append('../../') 
 from Naming.varDict import varDict
-from Fitting import fitFunction
+from Fitting.fitFunction import fitFunction
 
 var_dict = varDict()
 
@@ -46,7 +46,7 @@ j_gamma = RooRealVar("B_mass_johnson_gamma", "gamma", -3.1035e-01, -1.0,0.0)
 j_delta = RooRealVar("B_mass_johnson_delta", "delta", 1.3739e+00, 0.3, 10)
 j_mu = RooRealVar("B_mass_johnson_mu", "mu", 5.2726e+03, 5250, 5350)
 johnson = RooJohnson("johnson_pdf", "Johnson PDF", m_B, j_mu, j_lambda, j_gamma, j_delta)
-B_mass_fit['js'] = fitFunction(johnson, RooArgList(j_mu, j_lambda, j_gamma, j_delta))
+B_mass_fit['john'] = fitFunction(johnson, RooArgList(j_mu, j_lambda, j_gamma, j_delta))
 
 #TODO
 #GAUSS + EXP

@@ -4,13 +4,13 @@ from ROOT import RooPolynomial
 
 sys.path.append('../../') 
 from Naming.varDict import varDict
-from Fitting import fitFunction
+from Fitting.fitFunction import fitFunction
 
 var_dict = varDict()
 
-B_cos_theta_K = RooRealVar(var_dict["B_Theta_K"], "cos(#theta_{K})", -1, 1)
-B_cos_theta_L = RooRealVar(var_dict["B_Theta_L"], "cos(#theta_{L})", -1, 1)
-B_phi = RooRealVar(var_dict["B_Phi"], "#phi", -3.15, 3.15)
+B_cos_theta_K = RooRealVar(var_dict["ctk"], "cos(#theta_{K})", -1, 1)
+B_cos_theta_L = RooRealVar(var_dict["ctl"], "cos(#theta_{L})", -1, 1)
+B_phi = RooRealVar(var_dict["phi"], "#phi", -3.15, 3.15)
 
 A_mass_fit = {}
 
@@ -23,10 +23,10 @@ coefList_cos_theta_L = RooArgList(*coefs_list[3:6])
 coefList_phi = RooArgList(*coefs_list[6:9])
 
 poly_theta_K = RooPolynomial("poly_theta_K", "Pol3 Fit for B_Theta_K", B_cos_theta_K, coefList_cos_theta_K)
-A_mass_fit['theta_K'] = fitFunction(poly_theta_K, coefList_cos_theta_K)
+A_mass_fit['ctk'] = fitFunction(poly_theta_K, coefList_cos_theta_K)
 
 poly_theta_L = RooPolynomial("poly_theta_L", "Pol3 Fit for B_Theta_L", B_cos_theta_L, coefList_cos_theta_L)
-A_mass_fit['theta_L'] = fitFunction(poly_theta_L, coefList_cos_theta_L)
+A_mass_fit['ctl'] = fitFunction(poly_theta_L, coefList_cos_theta_L)
 
 poly_phi = RooPolynomial("poly_phi", "Polynomial Fit for B_Phi", B_phi, coefList_phi)
 A_mass_fit['phi'] = fitFunction(poly_phi, coefList_phi)
