@@ -58,7 +58,7 @@ public:
 
 
 void selectCand(TString inputFileName="ntuple-data18_13TeV_periodK_part_03", TString outputFileName="data_periodK_part03", int seed=42){ //300700_part_0 
-    TString tag = "_refit";
+    TString tag = "";
     TString cuts = "BmumuKst_meson0_pT" + tag + " > 500 && BmumuKst_meson1_pT" + tag + " > 500"
                     "&& BmumuKst_meson0_eta" + tag + " < 2.5 && BmumuKst_meson1_eta" + tag + " < 2.5"
                     "&& abs(BmumuKst_muon0_pT" + tag + ")"+" > 3500 && abs(BmumuKst_muon1_pT" + tag + ")"+" > 3500"
@@ -78,7 +78,7 @@ void selectCand(TString inputFileName="ntuple-data18_13TeV_periodK_part_03", TSt
     std::cout << "input  file: " << inputFile   << std::endl;
     std::cout << "output file: " << outputFile  << std::endl;
 
-    TChain *allcandt = new TChain("Nominal/BaseSelection_KStarMuMu_Selection");
+    TChain *allcandt = new TChain("Nominal/BaseSelection_KStarMuMu_BmumuKstSelection");
     allcandt->Add(inputFile);
     if (allcandt == 0) cout << "allcandt is null" << endl;
 
@@ -203,10 +203,6 @@ void selectCand(TString inputFileName="ntuple-data18_13TeV_periodK_part_03", TSt
     // TRandom3 *rand = new TRandom3(seed); 
     double chi2Min;
     int chi2MinIndex;
-    for(Long64_t i = 0; i< en_after; i++){
-        if (i % 100000 == 0)    std::cout<<"\r      " <<i<<" / "<<en_after<< std::flush;
-        allcandt_tree->GetEntry(i);
-        // std::cout << i <<" ";
     for(Long64_t i = 0; i< en_after; i++){
         if (i % 100000 == 0)    std::cout<<"\r      " <<i<<" / "<<en_after<< std::flush;
         allcandt_tree->GetEntry(i);
