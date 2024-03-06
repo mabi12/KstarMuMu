@@ -283,13 +283,11 @@ void selectCand(TString inputFileName="ntuple-data18_13TeV_periodK_part_03", TSt
 //TODO clone trigtree
 //TODO clone trigtree
 //     truthtree->CloneTree(-1, "fast");auto en_new = tree->GetEntries();
-auto en_new = tree->GetEntries();
-cout << "============================" << endl;
-cout << "created tree with " << en_new << " events" << endl;
-cout << "events without passed candidate " << eventsWithoutPass << endl;
-cout << "============================" << endl;
-
-newfile->Write();
-newfile->Close();
-
+    auto en_new = tree->GetEntries();
+    cout << "============================" << endl;
+    cout << "created tree with " << en_new << " events" << endl;
+    cout << "events without passed candidate " << eventsWithoutPass << endl;
+    cout << "============================" << endl;
+    newfile->Write();
+    newfile->Close();
 }
