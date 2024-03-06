@@ -57,7 +57,7 @@ public:
 
 
 
-void selectCand(TString inputFileName="ntuple-300700_part_02", TString outputFileName="sg_wide", int seed=42){ //300700_part_0 
+void selectCand(TString inputFileName="ntuple-data18_13TeV_periodK_part_03", TString outputFileName="data_periodK_part03", int seed=42){ //300700_part_0 
     TString tag = "_refit";
     TString cuts = "BmumuKst_meson0_pT" + tag + " > 500 && BmumuKst_meson1_pT" + tag + " > 500"
                     "&& BmumuKst_meson0_eta" + tag + " < 2.5 && BmumuKst_meson1_eta" + tag + " < 2.5"
@@ -80,33 +80,34 @@ void selectCand(TString inputFileName="ntuple-300700_part_02", TString outputFil
 
     TChain *allcandt = new TChain("Nominal/BaseSelection_KStarMuMu_Selection");
     allcandt->Add(inputFile);
-    if(allcandt==0) cout <<" allcandt is null " << endl;
+    if (allcandt == 0) cout << "allcandt is null" << endl;
+
     auto en_before = allcandt->GetEntries();
 
-    TTree * allcandt_tree = allcandt->CopyTree(cuts);
+    TTree *allcandt_tree = allcandt->CopyTree(cuts);
     auto en_after = allcandt_tree->GetEntries();
-    cout<<"========================="<<endl;
-    cout<<"after application of cuts:"<<endl;
-    cout<<"========================="<<endl;
-    cout<<cuts<<endl;
-    cout<<"========================="<<endl;
-    cout<<"number of events changed: "<<en_before<<" -> "<<en_after<<endl;
-    cout<<"========================="<<endl;
-    
-    
+
+    cout << "=========================" << endl;
+    cout << "after application of cuts:" << endl;
+    cout << "=========================" << endl;
+    cout << cuts << endl;
+    cout << "=========================" << endl;
+    cout << "number of events changed: " << en_before << " -> " << en_after << endl;
+    cout << "=========================" << endl;
+
     allcandt_tree->SetBranchStatus("*", false);
-    auto en_before = allcandt->GetEntries();
+    en_before = allcandt->GetEntries(); 
 
-    TTree * allcandt_tree = allcandt->CopyTree(cuts);
-    auto en_after = allcandt_tree->GetEntries();
-    cout<<"========================="<<endl;
-    cout<<"after application of cuts:"<<endl;
-    cout<<"========================="<<endl;
-    cout<<cuts<<endl;
-    cout<<"========================="<<endl;
-    cout<<"number of events changed: "<<en_before<<" -> "<<en_after<<endl;
-    cout<<"========================="<<endl;
-    
+    allcandt_tree = allcandt->CopyTree(cuts); 
+    en_after = allcandt_tree->GetEntries(); 
+
+    cout << "=========================" << endl;
+    cout << "after application of cuts:" << endl;
+    cout << "=========================" << endl;
+    cout << cuts << endl;
+    cout << "=========================" << endl;
+    cout << "number of events changed: " << en_before << " -> " << en_after << endl;
+    cout << "=========================" << endl;
     
     allcandt_tree->SetBranchStatus("*", false);
     TFile *newfile = new TFile(outputFile, "RECREATE");
@@ -281,18 +282,14 @@ void selectCand(TString inputFileName="ntuple-300700_part_02", TString outputFil
     }
 //TODO clone trigtree
 //TODO clone trigtree
-//     truthtree->CloneTree(-1, "fast");
-    auto en_new = tree->GetEntries();
-    cout<<"============================"<<endl;
-    cout<<"created tree with "<< en_new <<" events"<<endl;
-    cout<<"events without passed candidate "<<eventsWithoutPass  <<endl;
-    cout<<"============================"<<endl;
-    auto en_new = tree->GetEntries();
-    cout<<"============================"<<endl;
-    cout<<"created tree with "<< en_new <<" events"<<endl;
-    cout<<"events without passed candidate "<<eventsWithoutPass  <<endl;
-    cout<<"============================"<<endl;
-    newfile->Write();
-    newfile->Close();
-    
+//     truthtree->CloneTree(-1, "fast");auto en_new = tree->GetEntries();
+auto en_new = tree->GetEntries();
+cout << "============================" << endl;
+cout << "created tree with " << en_new << " events" << endl;
+cout << "events without passed candidate " << eventsWithoutPass << endl;
+cout << "============================" << endl;
+
+newfile->Write();
+newfile->Close();
+
 }
