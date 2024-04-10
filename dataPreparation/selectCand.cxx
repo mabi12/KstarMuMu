@@ -78,7 +78,7 @@ void selectCand(TString inputFileName="ntuple-data18_13TeV_periodK_part_03", TSt
     std::cout << "input  file: " << inputFile   << std::endl;
     std::cout << "output file: " << outputFile  << std::endl;
 
-    TChain *allcandt = new TChain("Nominal/BaseSelection_KStarMuMu_BmumuKstSelection");
+    TChain *allcandt = new TChain("Nominal/BaseSelection_KStarMuMu_Selection");
     allcandt->Add(inputFile);
     if (allcandt == 0) cout << "allcandt is null" << endl;
 
@@ -87,19 +87,8 @@ void selectCand(TString inputFileName="ntuple-data18_13TeV_periodK_part_03", TSt
     TTree *allcandt_tree = allcandt->CopyTree(cuts);
     auto en_after = allcandt_tree->GetEntries();
 
-    cout << "=========================" << endl;
-    cout << "after application of cuts:" << endl;
-    cout << "=========================" << endl;
-    cout << cuts << endl;
-    cout << "=========================" << endl;
-    cout << "number of events changed: " << en_before << " -> " << en_after << endl;
-    cout << "=========================" << endl;
-
     allcandt_tree->SetBranchStatus("*", false);
     en_before = allcandt->GetEntries(); 
-
-    allcandt_tree = allcandt->CopyTree(cuts); 
-    en_after = allcandt_tree->GetEntries(); 
 
     cout << "=========================" << endl;
     cout << "after application of cuts:" << endl;
@@ -155,8 +144,7 @@ void selectCand(TString inputFileName="ntuple-data18_13TeV_periodK_part_03", TSt
     tree->Branch("nCandidatesPassed", &nCandidatesPassed);
     tree->Branch("Bd", &Bd);
     tree->Branch("B_mass", &selected_B_mass);
-    tree->Branch("B_mass", &selected_B_mass);
-    tree->Branch("B_tau", &selected_B_mass);
+    //tree->Branch("B_tau", &selected_B_mass);
     tree->Branch("Kst_mass", &selected_Kst_mass);
 
     int eventsWithoutPass = 0;

@@ -14,7 +14,8 @@ import argparse
 
 #hack to load from parent directory
 sys.path.append('../') 
-# os.chdir("5dFit")
+#sys.path.append('./') 
+os.chdir("fit")
 from Naming.mcDict import mcDict
 from Naming.varDict import varDict
 from Naming.cuts import cuts_run1, var
@@ -24,7 +25,7 @@ from Fitting.Mass.Kfunctions import *
 from Fitting.Angles.Afunctions import *
 
 parser = argparse.ArgumentParser(description='Process input parameters for the ML fit.')
-parser.add_argument('fit_functions', default="john_voig_p333", help='fitfunctions for Bmass_Kstmass_angles, s for spherical harmonics, p for product of polynomials, numbers for the order of polynomial for cos theta_K, cos theta_L, phi respectively')
+parser.add_argument('--fit_functions', default="john_voig_p333", help='fitfunctions for Bmass_Kstmass_angles, s for spherical harmonics, p for product of polynomials, numbers for the order of polynomial for cos theta_K, cos theta_L, phi respectively')
 args = parser.parse_args()
 
 #Do not create plotting windows
@@ -38,7 +39,7 @@ gROOT.ProcessLine("class MyPlot;")
 csv_file_path = "./out/fit_results.csv"
 
 ch = TChain("BdBestChi")
-ch.Add(f"../data/sg_wide_bestCand.root")
+ch.Add(f"../data/data_periodK_*_bestCand.root")
 c = TCanvas("c", "c", 512,512)
 
 chi2s = []
@@ -47,8 +48,6 @@ param_values = []
 variable_names = ["B_cos_theta_K", "B_cos_theta_L", "B_phi", "m_B", "m_Kstar"]
 variables = RooArgSet(B_cos_theta_K, B_cos_theta_L, B_phi, m_B, m_Kstar)
 data = RooDataSet("data", "My RooDataSet", ch, variables)
-
-
 
 func = fit_functions.split("_")
 angularPdf = RooProdPdf("angularPdf", "angularPdf", RooArgList(poly_theta_K, poly_theta_L, poly_phi ))
