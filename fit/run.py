@@ -38,34 +38,32 @@ gROOT.ProcessLine("class MyPlot;")
 
 csv_file_path = "./out/fit_results.csv"
 
-#ch = TChain("BdBestChi")
-ch = TChain("Nominal/BaseSelection_KStarMuMu_Selection")
-ch.Add(f"../data/ntuple-300700_part_02.root")
+ch = TChain("BdBestChi")
+ch.Add(f"../data/data_300700_bestCand.root")
 c = TCanvas("c", "c", 512,512)
 chi2s = []
 param_values = []
-
+print(m_B)
 variable_names = ["B_cos_theta_K", "B_cos_theta_L", "B_phi", "m_B", "m_Kstar"]
 variables = RooArgSet(m_B, m_Kstar, B_cos_theta_K, B_cos_theta_L, B_phi)
-print(2)
 data = RooDataSet("data", "My RooDataSet", ch, variables)
-print(3)
-func = fit_functions.split("_")
-angularPdf = RooProdPdf("angularPdf", "angularPdf", RooArgList(poly_theta_K, poly_theta_L, poly_phi ))
-prodPdf = RooProdPdf("prodPdf", "prodPdf", RooArgList(B_mass_fit[func[3]], K_mass_fit[func[0]], angularPdf)) #[6, 3, 3, 3, 3]
+print(data.sumEntries())
+func = args.fit_functions.split("_")
+print(func)
+angularPdf = RooProdPdf("angularPdf", "angularPdf", RooArgList(poly_theta_K, poly_theta_L, poly_phi))
+prodPdf = RooProdPdf("prodPdf", "prodPdf", RooArgList(B_mass_fit[func[0]].f, K_mass_fit[func[1]].f, angularPdf)) #[4, 2, 3, 3, 3]
 
-dof = 18 #number degrees of freedom 
+dof = 15 #number degrees of freedom 
 
 fit_result = prodPdf.fitTo(data, RooFit.Save())
 fit_result.Print("v")
 # param_values.append(variable.getVal())
-chi2s.append(fit_result.Chi2()/fit_result.NDF())
+#chi2s.append(fit_result.Chi2()/fit_result.NDF())
+
 for variable in variables:
     var_Plot =  ROOT.MyPlot(variable, 250, "./out/", "Internal")
     var_Plot.plotVarAndPull(data, prodPdf, dof, f"{variable}")
 # chi2
-
-
 # with open(csv_file_path, "a") as csv_file:
 #      writer = csv.writer(csv_file, delimiter=" ")
 #      writer.writerow(["Variable", "Parameter Value", "Chi2"])

@@ -55,10 +55,10 @@ j_gamma = RooRealVar("B_mass_johnson_gamma", "gamma", -3.1035e-01, -1.0,0.0)
 j_delta = RooRealVar("B_mass_johnson_delta", "delta", 1.3739e+00, 0.3, 10)
 j_mu = RooRealVar("B_mass_johnson_mu", "mu", 5.2726e+03, 5250, 5350)
 johnson = RooJohnson("johnson_pdf", "Johnson PDF", m_B, j_mu, j_lambda, j_gamma, j_delta)
-bg_exp_lambda_johnson = RooRealVar("exp_lambda", "exp_lambda",  -0.01, -1, 0)
-bg_exp_johnson =  RooExponential("bg_exp", "bg_expo", m_B, bg_exp_lambda_johnson)
-bg_sg_johnson_exp = RooAddPdf("bg_sg_johnson_exp", "Superposition of Johnson and Exp (bg + sg)", RooArgList(johnson, bg_exp_johnson), RooArgList(gg_frac), True)
-B_mass_fit['john'] = fitFunction(bg_sg_johnson_exp, RooArgList(j_mu, j_lambda, j_gamma, j_delta, bg_exp_lambda_johnson, gg_frac))
+#bg_exp_lambda_johnson = RooRealVar("exp_lambda", "exp_lambda",  -0.01, -1, 0)
+#bg_exp_johnson =  RooExponential("bg_exp", "bg_expo", m_B, bg_exp_lambda_johnson)
+#bg_sg_johnson_exp = RooAddPdf("bg_sg_johnson_exp", "Superposition of Johnson and Exp (bg + sg)", RooArgList(johnson, bg_exp_johnson), RooArgList(gg_frac), True)
+B_mass_fit['john'] = fitFunction(johnson, RooArgList(j_mu, j_lambda, j_gamma, j_delta))
 
 #TODO
 #GAUSS + EXP
