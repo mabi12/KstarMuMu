@@ -53,7 +53,9 @@ RooPlot *MyPlot::plotVarAndPull(RooAbsData* data, RooAbsPdf*fit, int nParams, TS
 
     
     fit->plotOn(massFrame, RooFit::Name("fit"));
-    std::cout<<"chi/ndof = "<<massFrame->chiSquare(nParams)<<std::endl;
+    
+    double chi2ndof = massFrame->chiSquare(nParams);
+    std::cout << "chi/ndof = " << chi2ndof << std::endl;
 
     RooHist* hpullMass = massFrame->pullHist(); 
     RooPlot* massFramePull = (RooPlot*)var->frame() ;
@@ -61,6 +63,7 @@ RooPlot *MyPlot::plotVarAndPull(RooAbsData* data, RooAbsPdf*fit, int nParams, TS
     
     pads[0]->cd();
     massFrame->Draw();
+
     ATLASLabel(0.65,0.9,tagATLAS);
     TLatex *atlas2 = new TLatex(0.65,0.85,"#scale[0.7]{#sqrt{s}=13 TeV, 140 fb^{-1}}");
     atlas2->SetNDC(kTRUE);
@@ -68,6 +71,13 @@ RooPlot *MyPlot::plotVarAndPull(RooAbsData* data, RooAbsPdf*fit, int nParams, TS
     atlas2->SetTextColor(kBlack);
     atlas2->SetTextSize(0.06);
     atlas2->Draw();
+
+    TLatex *chi2Text = new TLatex(0.65, 0.8, TString::Format("#scale[0.7]{#chi^{2}/ndof = %.2f}", chi2ndof));
+    chi2Text->SetNDC(kTRUE);
+    chi2Text->SetTextFont(42);
+    chi2Text->SetTextColor(kBlack);
+    chi2Text->SetTextSize(0.06);
+    chi2Text->Draw();
 
     if(data_legend!="")     myMarkerText( 0.64, 0.935, 1, 20, data_legend,1.3);
     massFrame->GetYaxis()->SetRangeUser(0.001,1.1*massFrame->GetMaximum());

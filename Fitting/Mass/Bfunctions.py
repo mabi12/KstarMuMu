@@ -8,7 +8,7 @@ from Fitting.fitFunction import fitFunction
 
 var_dict = varDict()
 
-m_B = RooRealVar(var_dict["B_mass"],"m_{B} [MeV]",5150,5700)
+m_B = RooRealVar(var_dict["B_mass"],"m_{B} [MeV]",5000,5700)
 m_B_err = RooRealVar(var_dict["B_mass"]+"_err","#sigma_{mB}",0,50)
 gg_frac = RooRealVar("frac", "frac", 0.5, 0.01, 1)
 
@@ -30,30 +30,30 @@ B_mass_fit['cb'] = fitFunction(cb, RooArgList(cb_mean, cb_sigma, cb_alpha, cb_n,
 #Define Gaussian
 # g_scale_factor = RooRealVar("gauss_scale_factor", "per-event error scale factor", 2.5, 0.1, 10)
 # g_sigma = RooProduct("gauss_sigma","sigma", RooArgList(scale_factor, m_B_err))
-g1_mean = RooRealVar("B_mass_g1_mean", "Mean 1", 5300, 5250, 5350)
-g1_sigma = RooRealVar("B_mass_g1_sigma", "Sigma 1", 15, 10, 120)
-bg_exp_lambda_g1 = RooRealVar("exp_lambda", "exp_lambda",  -0.01, -1, 0)
-bg_exp_g1 = RooExponential("bg_exp", "bg_expo", m_B, bg_exp_lambda_g1)
+g1_mean = RooRealVar("B_mass_g1_mean", "Mean 1", 5280, 5000, 5700)
+g1_sigma = RooRealVar("B_mass_g1_sigma", "Sigma 1", 50, 0,135)
+#bg_exp_lambda_g1 = RooRealVar("exp_lambda", "exp_lambda",  -0.01, -1, 0)
+#bg_exp_g1 = RooExponential("bg_exp", "bg_expo", m_B, bg_exp_lambda_g1)
 g1 = RooGaussian("Gaussian1", "Gauss1", m_B, g1_mean, g1_sigma)
-bg_sg_exp_g1 = RooAddPdf("bg_sg_exp_gauss", "Superposition of Exp and Gaussian (bg + sg)", RooArgList(g1,bg_exp_g1), RooArgList(gg_frac), True) 
-B_mass_fit['g'] = fitFunction(g1, RooArgList(g1_mean, g1_sigma, bg_exp_lambda_g1, gg_frac))
+#bg_sg_exp_g1 = RooAddPdf("bg_sg_exp_gauss", "Superposition of Exp and Gaussian (bg + sg)", RooArgList(g1,bg_exp_g1), RooArgList(gg_frac), True) 
+B_mass_fit['g'] = fitFunction(g1, RooArgList(g1_mean, g1_sigma))
 
 #Define Double Gaussian
-g2_mean = RooRealVar("B_mass_g2_mean", "Mean 2", 5300, 5250, 5350)
-g2_sigma = RooRealVar("B_mass_g2_sigma", "Sigma 2", 15, 5, 40)
+g2_mean = RooRealVar("B_mass_g2_mean", "Mean 2", 5280, 5000, 5700)
+g2_sigma = RooRealVar("B_mass_g2_sigma", "Sigma 2", 100, 0, 120)
 g2 = RooGaussian("Gaussian2", "Gauss 2", m_B, g2_mean, g2_sigma)
-bg_exp_lambda_dg = RooRealVar("exp_lambda", "exp_lambda",  -0.01, -1, 0)
-bg_exp_dg = RooExponential("bg_exp", "bg_expo", m_B, bg_exp_lambda_dg)
+#bg_exp_lambda_dg = RooRealVar("exp_lambda", "exp_lambda",  -0.01, -1, 0)
+#bg_exp_dg = RooExponential("bg_exp", "bg_expo", m_B, bg_exp_lambda_dg)
 dg = RooAddPdf("DoubleGaussian","Double Gaussian",RooArgList(g1,g2),RooArgList(gg_frac),True)
-bg_sg_dg = RooAddPdf("bg_sg_Doublegaussian", "Superposition of Double Gaussian and Exp (bg + sg)")
-B_mass_fit['dg'] = fitFunction(dg, RooArgList(g1_mean, g1_sigma, g2_mean, g2_sigma, bg_exp_lambda_dg, gg_frac))
+#bg_sg_dg = RooAddPdf("bg_sg_Doublegaussian", "Superposition of Double Gaussian and Exp (bg + sg)")
+B_mass_fit['dg'] = fitFunction(dg, RooArgList(g1_mean, g1_sigma, g2_mean, g2_sigma, gg_frac))
 
 #TODO nice naming
 #JOHNSON
-j_lambda = RooRealVar("B_mass_johnson_lambda", "lambda",  3.0481e+01, 10, 100 )
-j_gamma = RooRealVar("B_mass_johnson_gamma", "gamma", -3.1035e-01, -1.0,0.0)
-j_delta = RooRealVar("B_mass_johnson_delta", "delta", 1.3739e+00, 0.3, 10)
-j_mu = RooRealVar("B_mass_johnson_mu", "mu", 5.2726e+03, 5250, 5350)
+j_lambda = RooRealVar("B_mass_johnson_lambda", "lambda",  3.0481e+01, 0.4, 40)
+j_gamma = RooRealVar("B_mass_johnson_gamma", "gamma", 0, -1,1)
+j_delta = RooRealVar("B_mass_johnson_delta", "delta", 0.55, 0.05, 30)
+j_mu = RooRealVar("B_mass_johnson_mu", "mu", 5.2726e+03, 5000, 5700)
 johnson = RooJohnson("johnson_pdf", "Johnson PDF", m_B, j_mu, j_lambda, j_gamma, j_delta)
 #bg_exp_lambda_johnson = RooRealVar("exp_lambda", "exp_lambda",  -0.01, -1, 0)
 #bg_exp_johnson =  RooExponential("bg_exp", "bg_expo", m_B, bg_exp_lambda_johnson)

@@ -60,7 +60,7 @@ data = RooDataSet("data", "My RooDataSet", ch, variables)
 #print(data.sumEntries())
 func = args.fit_functions.split("_")
 angularPdf = RooProdPdf("angularPdf", "angularPdf", RooArgList(poly_theta_K, poly_theta_L, poly_phi))
-prodPdf = RooProdPdf("prodPdf", "prodPdf", RooArgList(B_mass_fit[func[0]].f, K_mass_fit[func[1]].f, angularPdf)) #[5, 2, 3, 3, 0]
+prodPdf = RooProdPdf("prodPdf", "prodPdf", RooArgList(B_mass_fit[func[0]].f, K_mass_fit[func[1]].f, angularPdf)) #[5, 2, 3, 3, 1]
 
 dof = 14 #number degrees of freedom 
 

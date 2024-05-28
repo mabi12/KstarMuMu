@@ -20,7 +20,7 @@ coefs_list = [RooRealVar(coef_name, coef_name, 0.1, -1, 1) for coef_name in coef
 
 coefList_cos_theta_K = RooArgList(*coefs_list[:3])
 coefList_cos_theta_L = RooArgList(*coefs_list[3:6])
-coefList_phi = RooArgList(*coefs_list[6:9])
+coefList_phi = RooArgList(coefs_list[6])
 
 poly_theta_K = RooPolynomial("poly_theta_K", "Pol3 Fit for B_Theta_K", B_cos_theta_K, coefList_cos_theta_K)
 A_mass_fit['ctk'] = fitFunction(poly_theta_K, coefList_cos_theta_K)
@@ -30,4 +30,5 @@ A_mass_fit['ctl'] = fitFunction(poly_theta_L, coefList_cos_theta_L)
 
 poly_phi = RooPolynomial("poly_phi", "Polynomial Fit for B_Phi", B_phi, coefList_phi)
 A_mass_fit['phi'] = fitFunction(poly_phi, coefList_phi)
+
 

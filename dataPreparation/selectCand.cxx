@@ -66,7 +66,7 @@ void selectCand(TString inputFileName="ntuple-300700_part_02", TString outputFil
                     "&& BmumuKst_diMeson_pT" + tag + ">3000"
                     "&& ((BmumuKst_kaonPion_mass" + tag + " > 846 && BmumuKst_kaonPion_mass" + tag + " < 946) ||  (BmumuKst_pionKaon_mass" + tag + " > 846 && BmumuKst_pionKaon_mass" + tag + " < 946))"
                     "&& BmumuKst_diMuon_mass" + tag + "*BmumuKst_diMuon_mass" + tag + ">1000000 && BmumuKst_diMuon_mass" + tag + "*BmumuKst_diMuon_mass" + tag +"<9000000"
-                    "&& ((BmumuKst_B_mass" + tag + "> 5150 && BmumuKst_B_mass" + tag + "<5700)||(BmumuKst_Bbar_mass" + tag +">5150 && BmumuKst_Bbar_mass" + tag + "<5700))"
+                    "&& ((BmumuKst_B_mass" + tag + "> 5000 && BmumuKst_B_mass" + tag + "<5700)||(BmumuKst_Bbar_mass" + tag +">5000 && BmumuKst_Bbar_mass" + tag + "<5700))"
                     "&& (BmumuKst_B_tau_invM_PVMinA0/BmumuKst_B_tau_invM_PVMinA0_err>12.5 || BmumuKst_Bbar_tau_invM_PVMinA0/BmumuKst_Bbar_tau_invM_PVMinA0_err>12.5)"
                     "&& BmumuKst_diMuon_chi2_over_nDoF<10"
                     "&& BmumuKst_chi2_over_nDoF<3";
