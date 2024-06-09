@@ -30,7 +30,7 @@ public:
     TCanvas *c;
     TPad* pads[2];
         
-    RooPlot * plotVarAndPull(RooAbsData* data, RooAbsPdf*fit, int nParams, TString outName);
+    RooPlot * plotVarAndPull(RooAbsData* data, RooAbsPdf*fit, int nParams, TString outName, bool is_MC = true);
     RooPlot * plotVarAndResid(RooAbsData* data, RooAbsPdf*fit, TString outName, bool useWeight, int nBins, TString components[]);
     RooHist * getResid(RooAbsData* data, RooAbsPdf*fit, bool useWeight, int nBins);
     

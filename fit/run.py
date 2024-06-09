@@ -60,18 +60,18 @@ data = RooDataSet("data", "My RooDataSet", ch, variables)
 #print(data.sumEntries())
 func = args.fit_functions.split("_")
 angularPdf = RooProdPdf("angularPdf", "angularPdf", RooArgList(poly_theta_K, poly_theta_L, poly_phi))
-prodPdf = RooProdPdf("prodPdf", "prodPdf", RooArgList(B_mass_fit[func[0]].f, K_mass_fit[func[1]].f, angularPdf)) #[5, 2, 3, 3, 0]
+prodPdf = RooProdPdf("prodPdf", "prodPdf", RooArgList(B_mass_fit[func[0]].f, K_mass_fit[func[1]].f, angularPdf)) #[5, 2, 3, 3, 1]
 
-dof = 14 #number degrees of freedom 
+ndofs = [5, 2, 3, 3, 1]
 
 fit_result = prodPdf.fitTo(data, RooFit.Save())
 fit_result.Print("v")
 # param_values.append(variable.getVal())
 #chi2s.append(fit_result.Chi2()/fit_result.NDF())
 
-for variable, name in zip(variables, variable_names):
+for variable, name, ndof in zip(variables, variable_names, ndofs):
     var_Plot =  ROOT.MyPlot(extract_clean_var_name(variable), 250, "./out/", "Internal")
-    var_Plot.plotVarAndPull(data, prodPdf, dof, f"{name}")
+    var_Plot.plotVarAndPull(data, prodPdf, ndof, f"{name}", True)
 # chi2
 # with open(csv_file_path, "a") as csv_file:
 #      writer = csv.writer(csv_file, delimiter=" ")

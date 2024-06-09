@@ -21,7 +21,7 @@ MyPlot::MyPlot(RooRealVar *var, int nBins , TString outDir , TString tagATLAS ){
 
 }
 
-RooPlot *MyPlot::plotVarAndPull(RooAbsData* data, RooAbsPdf*fit, int nParams, TString outName){
+RooPlot *MyPlot::plotVarAndPull(RooAbsData* data, RooAbsPdf*fit, int nParams, TString outName, bool is_MC){
     bool useWeight = false;
     TString data_legend = "";
     //TODO debug components  //     TString components[];
@@ -65,12 +65,14 @@ RooPlot *MyPlot::plotVarAndPull(RooAbsData* data, RooAbsPdf*fit, int nParams, TS
     massFrame->Draw();
 
     ATLASLabel(0.65,0.9,tagATLAS);
-    TLatex *atlas2 = new TLatex(0.65,0.85,"#scale[0.7]{#sqrt{s}=13 TeV, 140 fb^{-1}}");
-    atlas2->SetNDC(kTRUE);
-    atlas2->SetTextFont(42);
-    atlas2->SetTextColor(kBlack);
-    atlas2->SetTextSize(0.06);
-    atlas2->Draw();
+   if (!is_MC) {
+        TLatex* atlas2 = new TLatex(0.65, 0.85, "#scale[0.7]{#sqrt{s}=13 TeV, 140 fb^{-1}}");
+        atlas2->SetNDC(kTRUE);
+        atlas2->SetTextFont(42);
+        atlas2->SetTextColor(kBlack);
+        atlas2->SetTextSize(0.06);
+        atlas2->Draw();
+    };
 
     TLatex *chi2Text = new TLatex(0.65, 0.8, TString::Format("#scale[0.7]{#chi^{2}/ndof = %.2f}", chi2ndof));
     chi2Text->SetNDC(kTRUE);
