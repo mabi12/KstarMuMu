@@ -32,11 +32,11 @@ from Fitting.Angles.Afunctions import AFit
 from Helpers.nameCleaning import *
 
 parser = argparse.ArgumentParser(description='Process input parameters for the ML fit.')
-parser.add_argument('--fit_functions', default="dg_voig_p331", help='fitfunctions for Bmass_Kstmass_angles, s for spherical harmonics, p for product of polynomials, numbers for the order of polynomial for cos theta_K, cos theta_L, phi respectively')
-parser.add_argument('--B_mass_range', nargs = 2, type = float, default=[5000, 5700], help='array of 2 int: [min_B_mass, max_B_mass]')
-parser.add_argument('--K_mass_range', nargs = 2, type = float, default=[846, 946], help='array of 2 int: [min_K_mass, max_K_mass]')
-parser.add_argument('--B_mass_err_range', nargs = 2, type = float, default=[0, 50], help='array of 2 int: [min_B_mass_err, max_B_mass_err]')
-parser.add_argument('--K_mass_err_range', nargs = 2, type = float, default=[0, 50], help='array of 2 int: [min_K_mass_err, max_K_mass_err]')
+parser.add_argument('--fit_functions', default="john_voig_p331", help='fitfunctions for Bmass_Kstmass_angles, s for spherical harmonics, p for product of polynomials, numbers for the order of polynomial for cos theta_K, cos theta_L, phi respectively')
+parser.add_argument('--B_mass_range', nargs = 2, type = int, default=[5000, 5700], help='array of 2 int: [min_B_mass, max_B_mass]')
+parser.add_argument('--K_mass_range', nargs = 2, type = int, default=[846, 946], help='array of 2 int: [min_K_mass, max_K_mass]')
+parser.add_argument('--B_mass_err_range', nargs = 2, type = int, default=[0, 50], help='array of 2 int: [min_B_mass_err, max_B_mass_err]')
+parser.add_argument('--K_mass_err_range', nargs = 2, type = int, default=[0, 50], help='array of 2 int: [min_K_mass_err, max_K_mass_err]')
 #TODO parser bool var for data preparation
 args = parser.parse_args()
 
@@ -56,22 +56,30 @@ def main():
     AFit_instance = AFit()
     AFit_instance.define_fit_functions()
 
-    B_mass_fit_function = BFit_instance.get_fit_function(args.fit_functions)
-    K_mass_fit_function = KFit_instance.get_fit_function(args.fit_functions)
-    poly_theta_K, poly_theta_L, poly_phi = AFit_instance.get_fit_function(args.fit_functions)
-    ctk_ndof, ctl_ndof, phi_ndof = AFit_instance.get_ndof(args.fit_functions)
+    tags = args.fit_functions.split("_")
 
+    B_mass_fit_function = BFit_instance.get_fit_function(tags[0])
+    K_mass_fit_function = KFit_instance.get_fit_function(tags[1])
+
+    poly_theta_K, poly_theta_L, poly_phi = AFit_instance.get_fit_function(tags[2])
+    ctk_ndof, ctl_ndof, phi_ndof = AFit_instance.get_ndof(tags[2])
+    B_mass_min_str = str(args.B_mass_range[0])
+    B_mass_max_str = str(args.B_mass_range[1])
     ch = TChain("BdBestChi")
-    ch.Add("../data/data_300700_bestCand.root")
+    file_name = f"../data/data_300700_{B_mass_min_str}_{B_mass_max_str}_bestCand.root"
+    ch.Add(file_name)
     c = TCanvas("c", "c", 512,512)
 
     variables = RooArgSet(BFit_instance.m_B, KFit_instance.m_Kstar, AFit_instance.B_cos_theta_K, AFit_instance.B_cos_theta_L, AFit_instance.B_phi)
     data = RooDataSet("data", "My RooDataSet", ch, variables)
     #print(data.sumEntries())
-    #angularPdf = RooProdPdf("angularPdf", "angularPdf", RooArgList(poly_theta_K, poly_theta_L, poly_phi))
-    prodPdf = RooProdPdf("prodPdf", "prodPdf", RooArgList(B_mass_fit_function, K_mass_fit_function)) #[5, 2, 3, 3, 0]
+    angularPdf = RooProdPdf("angularPdf", "angularPdf", RooArgList(poly_theta_K, poly_theta_L, poly_phi))
+    
+    #total_fit_functionm = B_mass_fit_function*K_mass_fit_function, angularPdf
+    
+    prodPdf = RooProdPdf("prodPdf", "prodPdf", RooArgList(B_mass_fit_function, K_mass_fit_function, angularPdf)) #[5, 2, 3, 3, 0]
 
-    ndofs = [5, 2] #number degrees of freedom 
+    ndofs = [5, 2, ctk_ndof, ctl_ndof, phi_ndof] #number degrees of freedom 
 
     fit_result = prodPdf.fitTo(data, RooFit.Save())
     fit_result.Print("v")
