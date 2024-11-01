@@ -17,20 +17,16 @@ class AFit():
         self.ctk_degree = ctk_degree
         self.ctl_degree = ctl_degree
         self.phi_degree = phi_degree
-
-    def create_coefs(self):
+    
+    def define_fit_functions(self):
         coef_names_ctk = [f"coef_theta_K_{number}" for number in range(1, self.ctk_degree+1)]
         coef_names_ctl = [f"coef_theta_L_{number}" for number in range(1, self.ctl_degree+1)]
         coef_names_phi = [f"coef_phi_{number}" for number in range(1, self.phi_degree+1)]
 
         coefs_list_ctk = [RooRealVar(coef_name, coef_name, 0.1, -1, 1) for coef_name in coef_names_ctk]
         coefs_list_ctl = [RooRealVar(coef_name, coef_name, 0.1, -1, 1) for coef_name in coef_names_ctl]
-        coefs_list_phi = [RooRealVar(coef_name, coef_name, 0.1, -1, 1) for coef_name in coef_names_phi]
+        coefs_list_phi = [RooRealVar(coef_name, coef_name, 0.1, -3.15, 3.15) for coef_name in coef_names_phi]
 
-        return coefs_list_ctk, coefs_list_ctl, coefs_list_phi
-    
-    def define_fit_functions(self):
-        coefs_list_ctk, coefs_list_ctl, coefs_list_phi = self.create_coefs()
         coefList_cos_theta_K = RooArgList(*coefs_list_ctk)
         coefList_cos_theta_L = RooArgList(*coefs_list_ctl)
         coefList_phi = RooArgList(*coefs_list_phi)
@@ -46,13 +42,8 @@ class AFit():
 
     def get_fit_function(self, tag:str):
 
-        tags = tag.split("_")
-        if len(tags) != 3:
-            raise ValueError("The fit_function argument should have 3 components separated by '_'")
-        A_tag = tags[2]
-
-        if A_tag.startswith("p"):
-            degrees = A_tag[1:]
+        if tag.startswith("p"):
+            degrees = tag[1:]
             if len(degrees) != 3:
                 raise ValueError("The polynomial degrees should be 3 ints after 'p'")
             try:
@@ -72,13 +63,9 @@ class AFit():
             raise ValueError("Unsupported angular fit function tag. Angule fit function needs to start with 'p")
     
     def get_ndof(self, tag: str):
-        tags = tag.split("_")
-        if len(tags) != 3:
-            raise ValueError("The fit_function argument should have 3 components separated by '_'")
-        A_tag = tags[2]
 
-        if A_tag.startswith("p"):
-            degrees = A_tag[1:]
+        if tag.startswith("p"):
+            degrees = tag[1:]
             ctk_degree = int(degrees[0])
             ctl_degree = int(degrees[1])
             phi_degree = int(degrees[2])

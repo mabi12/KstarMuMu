@@ -7,7 +7,7 @@ from Naming.varDict import varDict
 from Fitting.fitFunction import fitFunction
 
 class KFit(): 
-    def __init__(self, K_mass_range: list = [846, 946], K_mass_err_range: list = [0, 50]):
+    def __init__(self, K_mass_range: list = [800, 946], K_mass_err_range: list = [0, 50]):
         var_dict = varDict()
 
         self.m_Kstar = RooRealVar(var_dict["Kstar_mass"],"m_{K*} [MeV]",K_mass_range[0],K_mass_range[1])
@@ -26,16 +26,9 @@ class KFit():
         self.K_mass_fit['voig'] = fitFunction(voigt, RooArgList(v_mean, v_width, v_sigma))
 
     def get_fit_function(self, tag:str):
-        tags = tag.split("_")
-        if len(tags) != 3:
-            raise ValueError("The fit_function argument should have 3 components separated by '_'")
-
-        K_tag = tags[1]
-        
-        mass_fit_func = self.K_mass_fit.get(K_tag)
+        mass_fit_func = self.K_mass_fit.get(tag)
         if not mass_fit_func:
-            raise ValueError(f"K mass fit function '{K_tag} not defined'")
-        
+            raise ValueError(f"K mass fit function '{tag} not defined'")
         return mass_fit_func.f
     
     def get_ndof(self):

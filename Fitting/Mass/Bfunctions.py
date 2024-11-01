@@ -27,13 +27,13 @@ class BFit():
         bg_exp_cb= RooExponential("bg_exp", "bg_expo", self.m_B, bg_exp_lambda_cb)
         cb = RooCBShape("CrystalBall", "Crystal Ball",self.m_B, cb_mean, cb_sigma, cb_alpha, cb_n)
         bg_sg_exp_cb = RooAddPdf("bg_sg_exp_cb", "Superposition of Exp and Crystal Ball (bg + sg)", RooArgList(cb, bg_exp_cb), RooArgList(self.frac), True)
-        self.B_mass_fit['cb'] = fitFunction(cb, RooArgList(cb_mean, cb_sigma, cb_alpha, cb_n, bg_exp_lambda_cb, self.frac))
+        self.B_mass_fit['cb'] = fitFunction(cb, RooArgList(cb_mean, cb_sigma, cb_alpha, cb_n, self.frac))
 
         #Define Gaussian
         # g_scale_factor = RooRealVar("gauss_scale_factor", "per-event error scale factor", 2.5, 0.1, 10)
         # g_sigma = RooProduct("gauss_sigma","sigma", RooArgList(scale_factor, m_B_err))
         g1_mean = RooRealVar("B_mass_g1_mean", "Mean 1", 5280, 5000, 5700)
-        g1_sigma = RooRealVar("B_mass_g1_sigma", "Sigma 1", 50, 1e-5,135)
+        g1_sigma = RooRealVar("B_mass_g1_sigma", "Sigma 1", 50, 0.1,135)
         #bg_exp_lambda_g1 = RooRealVar("exp_lambda", "exp_lambda",  -0.01, -1, 0)
         #bg_exp_g1 = RooExponential("bg_exp", "bg_expo", m_B, bg_exp_lambda_g1)
         g1 = RooGaussian("Gaussian1", "Gauss1", self.m_B, g1_mean, g1_sigma)
@@ -41,15 +41,15 @@ class BFit():
         self.B_mass_fit['g'] = fitFunction(g1, RooArgList(g1_mean, g1_sigma))
 
         #Define Double Gaussian
-        g2_mean = RooRealVar("B_mass_g2_mean", "Mean 2", 5280, 5000, 5700)
-        g2_sigma = RooRealVar("B_mass_g2_sigma", "Sigma 2", 100, 1e-5, 120)
+        g2_mean = RooRealVar("B_mass_g2_mean", "Mean 2", 5280, 5000, 5000)
+        g2_sigma = RooRealVar("B_mass_g2_sigma", "Sigma 2", 100, 0.1, 120)
         g2 = RooGaussian("Gaussian2", "Gauss 2", self.m_B, g2_mean, g2_sigma)
         #bg_exp_lambda_dg = RooRealVar("exp_lambda", "exp_lambda",  -0.01, -1, 0)
         #bg_exp_dg = RooExponential("bg_exp", "bg_expo", m_B, bg_exp_lambda_dg)
         dg = RooAddPdf("DoubleGaussian","Double Gaussian",RooArgList(g1,g2),RooArgList(self.frac),True)
         #bg_sg_dg = RooAddPdf("bg_sg_Doublegaussian", "Superposition of Double Gaussian and Exp (bg + sg)")
         self.B_mass_fit['dg'] = fitFunction(dg, RooArgList(g1_mean, g1_sigma, g2_mean, g2_sigma, self.frac))
-
+        
         #TODO nice naming
         #JOHNSON
         j_lambda = RooRealVar("B_mass_johnson_lambda", "lambda",  3.0481e+01, 0.4, 40)
@@ -76,13 +76,9 @@ class BFit():
         self.B_mass_fit["expg"] = fitFunction(bg_sg_superposed_exp_gaussian, RooArgList(g_mean_3, g_sigma_3, sg_exp_lambda, bg_exp_lambda_gaussian_2, self.frac))
 
     def get_fit_function(self, tag:str):
-        tags = tag.split("_")
-        if len(tags) != 3:
-            raise ValueError("The fit_function argument should have 3 components separated by '_'")
-        B_tag = tags[0]
-        mass_fit_func = self.B_mass_fit.get(B_tag)
+        mass_fit_func = self.B_mass_fit.get(tag)
         if not mass_fit_func:
-            raise ValueError(f"B mass fit function '{B_tag} not defined'")
+            raise ValueError(f"B mass fit function '{tag} not defined'")
         
         return mass_fit_func.f
 
