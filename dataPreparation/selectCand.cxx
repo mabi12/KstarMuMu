@@ -57,8 +57,10 @@ public:
 
 
 
-void selectCand(TString inputFileName="ntuple-300700_part_02", TString outputFileName="sg_wide", int seed=42){ //300700_part_0 
+void selectCand(double B_mass_min = 5150, double B_mass_max = 5350,TString inputFileName="ntuple-300700_part_02", TString outputFileName="data_300700", int seed=42){ //300700_part_0 
     TString tag = "_refit";
+    TString B_mass_min_str = TString::Format("%.0f", B_mass_min);  // Format with 0 decimal places
+    TString B_mass_max_str = TString::Format("%.0f", B_mass_max);
     TString cuts = "BmumuKst_meson0_pT" + tag + " > 500 && BmumuKst_meson1_pT" + tag + " > 500"
                     "&& BmumuKst_meson0_eta" + tag + " < 2.5 && BmumuKst_meson1_eta" + tag + " < 2.5"
                     "&& abs(BmumuKst_muon0_pT" + tag + ")"+" > 3500 && abs(BmumuKst_muon1_pT" + tag + ")"+" > 3500"
@@ -66,47 +68,37 @@ void selectCand(TString inputFileName="ntuple-300700_part_02", TString outputFil
                     "&& BmumuKst_diMeson_pT" + tag + ">3000"
                     "&& ((BmumuKst_kaonPion_mass" + tag + " > 846 && BmumuKst_kaonPion_mass" + tag + " < 946) ||  (BmumuKst_pionKaon_mass" + tag + " > 846 && BmumuKst_pionKaon_mass" + tag + " < 946))"
                     "&& BmumuKst_diMuon_mass" + tag + "*BmumuKst_diMuon_mass" + tag + ">1000000 && BmumuKst_diMuon_mass" + tag + "*BmumuKst_diMuon_mass" + tag +"<9000000"
-                    "&& ((BmumuKst_B_mass" + tag + "> 5150 && BmumuKst_B_mass" + tag + "<5700)||(BmumuKst_Bbar_mass" + tag +">5150 && BmumuKst_Bbar_mass" + tag + "<5700))"
+                    "&& ((BmumuKst_B_mass" + tag + ">" + B_mass_min_str + "&& BmumuKst_B_mass" + tag + "<" + B_mass_max_str + ")||(BmumuKst_Bbar_mass" + tag +">" + B_mass_min_str + "&& BmumuKst_Bbar_mass" + tag + "<"+ B_mass_max_str +"))"
                     "&& (BmumuKst_B_tau_invM_PVMinA0/BmumuKst_B_tau_invM_PVMinA0_err>12.5 || BmumuKst_Bbar_tau_invM_PVMinA0/BmumuKst_Bbar_tau_invM_PVMinA0_err>12.5)"
                     "&& BmumuKst_diMuon_chi2_over_nDoF<10"
-                    "&& BmumuKst_chi2_over_nDoF<2";
+                    "&& BmumuKst_chi2_over_nDoF<3";
     cout<<cuts<<endl;
     const Float_t pdgKst = 896;
     TString inputFile = "../data/" + inputFileName + ".root";
-    TString outputFile = "../data/" + outputFileName + "_bestCand.root";
+    TString outputFile = "../data/" + outputFileName +"_" + B_mass_min_str + "_" + B_mass_max_str +  "_bestCand.root";
 
     std::cout << "input  file: " << inputFile   << std::endl;
     std::cout << "output file: " << outputFile  << std::endl;
 
     TChain *allcandt = new TChain("Nominal/BaseSelection_KStarMuMu_Selection");
     allcandt->Add(inputFile);
-    if(allcandt==0) cout <<" allcandt is null " << endl;
+    if (allcandt == 0) cout << "allcandt is null" << endl;
+
     auto en_before = allcandt->GetEntries();
 
-    TTree * allcandt_tree = allcandt->CopyTree(cuts);
+    TTree *allcandt_tree = allcandt->CopyTree(cuts);
     auto en_after = allcandt_tree->GetEntries();
-    cout<<"========================="<<endl;
-    cout<<"after application of cuts:"<<endl;
-    cout<<"========================="<<endl;
-    cout<<cuts<<endl;
-    cout<<"========================="<<endl;
-    cout<<"number of events changed: "<<en_before<<" -> "<<en_after<<endl;
-    cout<<"========================="<<endl;
-    
-    
+
     allcandt_tree->SetBranchStatus("*", false);
-    auto en_before = allcandt->GetEntries();
+    en_before = allcandt->GetEntries(); 
 
-    TTree * allcandt_tree = allcandt->CopyTree(cuts);
-    auto en_after = allcandt_tree->GetEntries();
-    cout<<"========================="<<endl;
-    cout<<"after application of cuts:"<<endl;
-    cout<<"========================="<<endl;
-    cout<<cuts<<endl;
-    cout<<"========================="<<endl;
-    cout<<"number of events changed: "<<en_before<<" -> "<<en_after<<endl;
-    cout<<"========================="<<endl;
-    
+    cout << "=========================" << endl;
+    cout << "after application of cuts:" << endl;
+    cout << "=========================" << endl;
+    cout << cuts << endl;
+    cout << "=========================" << endl;
+    cout << "number of events changed: " << en_before << " -> " << en_after << endl;
+    cout << "=========================" << endl;
     
     allcandt_tree->SetBranchStatus("*", false);
     TFile *newfile = new TFile(outputFile, "RECREATE");
@@ -154,8 +146,7 @@ void selectCand(TString inputFileName="ntuple-300700_part_02", TString outputFil
     tree->Branch("nCandidatesPassed", &nCandidatesPassed);
     tree->Branch("Bd", &Bd);
     tree->Branch("B_mass", &selected_B_mass);
-    tree->Branch("B_mass", &selected_B_mass);
-    tree->Branch("B_tau", &selected_B_mass);
+    //tree->Branch("B_tau", &selected_B_mass);
     tree->Branch("Kst_mass", &selected_Kst_mass);
 
     int eventsWithoutPass = 0;
@@ -203,18 +194,11 @@ void selectCand(TString inputFileName="ntuple-300700_part_02", TString outputFil
     double chi2Min;
     int chi2MinIndex;
     for(Long64_t i = 0; i< en_after; i++){
-        if (i % 100000 == 0)    std::cout<<"\r      " <<i<<" / "<<en_after<< std::flush;
-        allcandt_tree->GetEntry(i);
-        // std::cout << i <<" ";
-    for(Long64_t i = 0; i< en_after; i++){
-        if (i % 100000 == 0)    std::cout<<"\r      " <<i<<" / "<<en_after<< std::flush;
+        if (i % 1000 == 0)    std::cout<<"\r      " <<i<<" / "<<en_after<< std::flush;
         allcandt_tree->GetEntry(i);
         // std::cout << i <<" ";
         chi2Min = 100;
         chi2MinIndex = -10;
-        nCandidates = B_mass.size();
-        nCandidatesPassed = 0;
-        if(nCandidates==0){
         nCandidates = B_mass.size();
         nCandidatesPassed = 0;
         if(nCandidates==0){
@@ -223,8 +207,8 @@ void selectCand(TString inputFileName="ntuple-300700_part_02", TString outputFil
         }
         for(int j = 0; j<nCandidates;j++){
             // std::cout << j;
-            if (B_chi2_ndof.at(j) >= 2) continue;
-            if ((B_mass.at(j) <= 4900 || B_mass.at(j) >= 5900) && (Bbar_mass.at(j) <= 4900 || Bbar_mass.at(j) >= 5900)) continue;  //TODO teraz to je ze ak obe su mimo
+            if (B_chi2_ndof.at(j) >= 3) continue;
+            if ((B_mass.at(j) <= B_mass_min || B_mass.at(j) >= B_mass_max) && (Bbar_mass.at(j) <= B_mass_min || Bbar_mass.at(j) >= B_mass_max)) continue;  //TODO teraz to je ze ak obe su mimo
             // if ((Kpi_mass.at(j) <= 846 || Kpi_mass.at(j) >= 946) && (piK_mass.at(j) <= 846 || piK_mass.at(j) >= 946)) continue;  //TODO teraz to je ze ak obe su mimo
             // if (diMuon_mass.at(j)*diMuon_mass.at(j)<=40000 || diMuon_mass.at(j)*diMuon_mass.at(j)>=6000000) continue;  //TODO phi veto
             // if (B_tau.at(j)/B_tau_err.at(j) <= 12.75) continue; //TODO 12.75?
@@ -274,25 +258,16 @@ void selectCand(TString inputFileName="ntuple-300700_part_02", TString outputFil
             tree->Fill();
         } else eventsWithoutPass++;
         // std::cout << std::endl;
-        
-        } else eventsWithoutPass++;
-        // std::cout << std::endl;
-        
+ 
     }
 //TODO clone trigtree
 //TODO clone trigtree
-//     truthtree->CloneTree(-1, "fast");
+//     truthtree->CloneTree(-1, "fast");auto en_new = tree->GetEntries();
     auto en_new = tree->GetEntries();
-    cout<<"============================"<<endl;
-    cout<<"created tree with "<< en_new <<" events"<<endl;
-    cout<<"events without passed candidate "<<eventsWithoutPass  <<endl;
-    cout<<"============================"<<endl;
-    auto en_new = tree->GetEntries();
-    cout<<"============================"<<endl;
-    cout<<"created tree with "<< en_new <<" events"<<endl;
-    cout<<"events without passed candidate "<<eventsWithoutPass  <<endl;
-    cout<<"============================"<<endl;
+    cout << "============================" << endl;
+    cout << "created tree with " << en_new << " events" << endl;
+    cout << "events without passed candidate " << eventsWithoutPass << endl;
+    cout << "============================" << endl;
     newfile->Write();
     newfile->Close();
-    
 }

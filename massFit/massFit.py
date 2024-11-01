@@ -31,7 +31,6 @@ gROOT.ProcessLine("class MyPlot;")
 
 mc_dict = mcDict(debugPrint=False)
 var_dict = varDict()
-
 # ch = TChain("Nominal/BaseSelection_KStarMuMu_BmumuKstSelection", "Nominal/BaseSelection_KStarMuMu_BmumuKstSelection")
 ch = TChain("BdBestChi")
 ch.Add(f"../data/ntuple-{mc_dict['Bd_Kstar_mumu']}_part_combi12_bestCand.root")

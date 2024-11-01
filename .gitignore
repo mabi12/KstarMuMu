@@ -5,4 +5,5 @@ triggerStudies/out/*
 *.pyc
 mcStudies/out/*
 massFit/out/*
+fit/out/*
 .key/my*
