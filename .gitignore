@@ -7,3 +7,5 @@ mcStudies/out/*
 massFit/out/*
 fit/out/*
 .key/my*
+._.DS_Store
+._run.py
